@@ -1,0 +1,60 @@
+library(tidyverse)
+library(ggthemes)
+library(ggplot2)
+library(stringr)
+
+# read in file
+library(readxl)
+superstore <- read_excel("data/Superstore.xlsx")
+
+# take a peekie at if its tidy or not
+view(superstore)
+
+# cleaning names
+library(janitor)
+superstore <- clean_names(superstore, case = "snake")
+view(superstore)
+
+# dropping columns
+superstore <- superstore |>
+  select(
+    category, department, discount, 
+    order_date, order_priority, order_quantity,
+    profit, region, sales, ship_mode, shipping_cost, 
+    state, customer_name
+    )
+view(superstore)
+
+# creating a column
+superstore <- superstore |>
+  mutate(expenses = sales - profit)
+view(superstore)
+
+# large discount
+superstore <- superstore |>
+  mutate(large_discount = (discount > 0.1))
+view(superstore)
+
+# middle name fraud
+
+# names <- unique(superstore$customer_name)
+# parts <- strsplit(names, " ")
+# length <- lengths(parts)
+# middle_yes <- (length >= 2)
+# print(sum(middle_yes))
+
+split <- strsplit(superstore$customer_name, " ")
+length <- lengths(split)
+print(length)
+superstore |>
+  mutate(middle_yes = (length >= 2))
+view(superstore)
+mid <- superstore |>
+  unique(superstore$customer_name) |>
+  filter(middle)
+print(mid)
+
+# ch <- " "
+# superstore <- superstore |>
+#   mutate(middle = str_count(superstore$customer_name, ch))
+# print(sum(unique(superstore$middle) >= 2))
